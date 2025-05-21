@@ -32,14 +32,16 @@ def reiniciar_ord(df):
     df = df.drop(columns=["ORD"])  # remove a coluna ORD original
     return df
 
+
+
 ufp_colors = {
-"PB": "#17244D",
-"MG": "#101833",
-"SC": "#5B627A",
-"SP": "#3B4253",
-"RJ": "#7983A3",
-"MT": "#5B627A",
-"PR":"#3D4562",
+    "PB": "#17244D",  
+    "MG": "#0F1C2E",  
+    "SC": "#5F4545",  
+    "SP": "#2C3E50",  
+    "RJ": "#556270",  
+    "MT": "#37474F", 
+    "PR": "#6B7177",  
 }
 
 def style_table(row):
