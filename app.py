@@ -293,7 +293,7 @@ df_pessoas_evento_filtrado["MOTORISTA_COM_ICONE"] = df_pessoas_evento_filtrado.a
 df_pessoas_evento_filtrado = df_pessoas_evento_filtrado.rename(columns={"RAZAO_SOCIAL": "MOTORISTA_OLD"})
 df_pessoas_evento_filtrado["RAZAO_SOCIAL"] = df_pessoas_evento_filtrado["MOTORISTA_COM_ICONE"]
 df_pessoas_evento_filtrado.drop(columns=["MOTORISTA_OLD", "MOTORISTA_COM_ICONE"], inplace=True, errors='ignore')
-df_pessoas_evento_filtrado["CARRETA_CLASS_TABELA"] = df_pessoas_evento_filtrado["CARRETA_CLASS_TABELA"].fillna("⛓️‍💥 DESENGATADO")
+df_pessoas_evento_filtrado["CARRETA_CLASS_TABELA"] = df_pessoas_evento_filtrado["CARRETA_CLASS_TABELA"].fillna("⛓️‍💥DESENGATADO")
 df_pessoas_evento_filtrado = df_pessoas_evento_filtrado[["ORD","UFP_ATUAL","RAZAO_SOCIAL","EVENTO","DATA_DVS","LOCALIZACAO_EVENTO","TEMPO","ULTIMA_PLACA","LOCALIZACAO_ATUAL","CARRETA_CLASS_TABELA","FILTRAGEM"]]
 df_pessoas_evento_filtrado = df_pessoas_evento_filtrado.rename(
         columns={"ORD":"ORDEM",
@@ -328,7 +328,7 @@ nomes = ["SIDER CLASSIFICADO", "SIDER DIVERSOS", "BAÚ CLASSIFICADO / DIVERSOS",
 slideshow_images = []
 slideshow_duration = len(slideshow_images)
 avisos_index = len(nomes) - 1
-count = st_autorefresh(interval=30000, limit=None, key="auto_refresh")
+count = st_autorefresh(interval=2000, limit=None, key="auto_refresh")
 dfs_validos = []
 nomes_validos = [] 
 for df_, nome_ in zip(dfs, nomes):

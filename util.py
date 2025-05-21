@@ -51,9 +51,9 @@ def render_table_with_red_header(df):
         .hide(axis="index")
         .set_table_styles([
             {'selector': 'table', 'props': [('border-collapse', 'collapse')]},
-            {'selector': 'th, td', 'props': [('border', '2px solid #1F3066'), ('padding', '1px 8px'),('white-space', 'nowrap'),('overflow', 'hidden'),('text-overflow', 'ellipsis')]},
+            {'selector': 'th, td', 'props': [('border', '2px solid #1F3066'), ('padding', '0px 6px'),('white-space', 'nowrap'),('overflow', 'hidden'),('text-overflow', 'ellipsis')]},
             {'selector': 'thead th', 'props': [('background-color', '#70050A'), ('color', 'white'), ('font-weight', 'bold'), ('font-size', '18px') ]},
-            {'selector': 'tbody td', 'props': [('min-width', '170px'), ('max-width', '170px'), ('text-align', 'center'),('font-weight', 'bold') ]},
+            {'selector': 'tbody td', 'props': [('min-width', '170px'), ('max-width', '170px'), ('text-align', 'center'),('font-weight', 'bold'), ('font-size', '20px') ]},
             {'selector': 'th.col1', 'props': [('display', 'none')]},
             {'selector': 'td.col1', 'props': [('display', 'none')]},
             {'selector': 'td.col0', 'props': [('min-width', '70px')]},
@@ -69,6 +69,7 @@ def render_table_with_red_header(df):
             {'selector': 'th.col8', 'props': [('min-width', '300px')]},
             {'selector': 'td.col8', 'props': [('min-width', '300px')]},
             {'selector': 'th.col9', 'props': [('min-width', '80px'),('white-space', 'wrap')]},
+            {'selector': 'td.col9', 'props': [('overflow', 'visible')]},
         ], overwrite=False)
         .apply(style_table, axis=1)
         .to_html(index=False)
