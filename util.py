@@ -16,6 +16,8 @@ agora = datetime.now(fuso_brasilia).replace(tzinfo=None)  # remove timezone
 def calcular_tempo(data_dvs):
     if pd.isna(data_dvs):
         return None
+    fuso_brasilia = pytz.timezone("America/Sao_Paulo")
+    agora = datetime.now(fuso_brasilia).replace(tzinfo=None)
     delta = agora - data_dvs
     total_segundos = int(delta.total_seconds())
     dias = total_segundos // 86400
