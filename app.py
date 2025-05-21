@@ -328,7 +328,7 @@ nomes = ["SIDER CLASSIFICADO", "SIDER DIVERSOS", "BAÚ CLASSIFICADO / DIVERSOS",
 slideshow_images = []
 slideshow_duration = len(slideshow_images)
 avisos_index = len(nomes) - 1
-count = st_autorefresh(interval=3000, limit=None, key="auto_refresh")
+count = st_autorefresh(interval=30000, limit=None, key="auto_refresh")
 dfs_validos = []
 nomes_validos = [] 
 for df_, nome_ in zip(dfs, nomes):
