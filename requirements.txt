@@ -6,3 +6,4 @@ sqlalchemy
 streamlit-autorefresh
 pytz
 beautifulsoup4
+python-dotenv
