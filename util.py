@@ -60,12 +60,15 @@ def render_table_with_red_header(df):
             {'selector': 'th.col0', 'props': [('min-width', '70px')]},
             {'selector': 'th.col2', 'props': [('min-width', '300px')]},
             {'selector': 'td.col2', 'props': [('min-width', '300px'), ('text-align', 'left')]},
-            {'selector': 'th.col3', 'props': [('min-width', '100px')]},
+            {'selector': 'th.col3', 'props': [('min-width', '100px'),('white-space', 'wrap')]},
             {'selector': 'td.col3', 'props': [('min-width', '100px')]},
             {'selector': 'th.col5', 'props': [('min-width', '300px')]},
             {'selector': 'td.col5', 'props': [('min-width', '300px')]},
+            {'selector': 'th.col7', 'props': [('min-width', '220px'),('overflow', 'visible')]},
+            {'selector': 'td.col7', 'props': [('min-width', '220px'),('overflow', 'visible')]},
             {'selector': 'th.col8', 'props': [('min-width', '300px')]},
             {'selector': 'td.col8', 'props': [('min-width', '300px')]},
+            {'selector': 'th.col9', 'props': [('min-width', '80px'),('white-space', 'wrap')]},
         ], overwrite=False)
         .apply(style_table, axis=1)
         .to_html(index=False)

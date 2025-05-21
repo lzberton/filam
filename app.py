@@ -255,6 +255,11 @@ df_pessoas_evento["CLASS"] = (
     df_pessoas_evento["TIPO_CARRETA_REAL"].fillna("") +
     df_pessoas_evento["CLASSIFICADO_CARRETA"].fillna("")
 )
+df_pessoas_evento["ULTIMA_PLACA"] = np.where(
+    df_pessoas_evento["ULTIMA_PLACA"] == df_pessoas_evento["PLACA_x"],
+    df_pessoas_evento["ULTIMA_PLACA"],
+    "(Anterior: " + df_pessoas_evento["PLACA_x"] + ") " + df_pessoas_evento["ULTIMA_PLACA"]
+)
 df_pessoas_evento_filtrado = df_pessoas_evento[
     (df_pessoas_evento["STATUS_FILA"] == "Na Fila") &
     (df_pessoas_evento["ULTIMA_PLACA"].notnull()) &
@@ -284,9 +289,11 @@ df_pessoas_evento_filtrado["MOTORISTA_COM_ICONE"] = df_pessoas_evento_filtrado.a
     lambda row: f"{icon}{row['RAZAO_SOCIAL']} " if pd.notnull(row.get("DATA_VENCIMENTO")) else row["RAZAO_SOCIAL"],
     axis=1
 )
+
 df_pessoas_evento_filtrado = df_pessoas_evento_filtrado.rename(columns={"RAZAO_SOCIAL": "MOTORISTA_OLD"})
 df_pessoas_evento_filtrado["RAZAO_SOCIAL"] = df_pessoas_evento_filtrado["MOTORISTA_COM_ICONE"]
 df_pessoas_evento_filtrado.drop(columns=["MOTORISTA_OLD", "MOTORISTA_COM_ICONE"], inplace=True, errors='ignore')
+df_pessoas_evento_filtrado["CARRETA_CLASS_TABELA"] = df_pessoas_evento_filtrado["CARRETA_CLASS_TABELA"].fillna("⛓️‍💥 DESENGATADO")
 df_pessoas_evento_filtrado = df_pessoas_evento_filtrado[["ORD","UFP_ATUAL","RAZAO_SOCIAL","EVENTO","DATA_DVS","LOCALIZACAO_EVENTO","TEMPO","ULTIMA_PLACA","LOCALIZACAO_ATUAL","CARRETA_CLASS_TABELA","FILTRAGEM"]]
 df_pessoas_evento_filtrado = df_pessoas_evento_filtrado.rename(
         columns={"ORD":"ORDEM",
@@ -304,7 +311,9 @@ df_pessoas_evento_filtrado = df_pessoas_evento_filtrado.rename(
 )
 df_pessoas_evento_filtrado["DATA EVENTO"] = df_pessoas_evento_filtrado["DATA EVENTO"].dt.strftime("%d/%m/%Y %H:%M")
 df_sdc = df_pessoas_evento_filtrado[df_pessoas_evento_filtrado["FILTRAGEM"] == "Sider Class"].drop(columns=["FILTRAGEM"])
-df_sdd = df_pessoas_evento_filtrado[df_pessoas_evento_filtrado["FILTRAGEM"] == "Sider Div"].drop(columns=["FILTRAGEM"])
+df_sdd = df_pessoas_evento_filtrado[
+    df_pessoas_evento_filtrado["FILTRAGEM"].isin(["Sider Div", "DESENGATADO"])
+].drop(columns=["FILTRAGEM"])
 df_bau = df_pessoas_evento_filtrado[df_pessoas_evento_filtrado["FILTRAGEM"] == "Bau"].drop(columns=["FILTRAGEM"])
 df_rodo = df_pessoas_evento_filtrado[df_pessoas_evento_filtrado["FILTRAGEM"] == "Rodo"].drop(columns=["FILTRAGEM"])
 df_outros = df_pessoas_evento_filtrado[df_pessoas_evento_filtrado["FILTRAGEM"].notna()].drop(columns=["FILTRAGEM"])
@@ -319,9 +328,9 @@ nomes = ["SIDER CLASSIFICADO", "SIDER DIVERSOS", "BAÚ CLASSIFICADO / DIVERSOS",
 slideshow_images = []
 slideshow_duration = len(slideshow_images)
 avisos_index = len(nomes) - 1
-count = st_autorefresh(interval=30000, limit=None, key="auto_refresh")
+count = st_autorefresh(interval=3000, limit=None, key="auto_refresh")
 dfs_validos = []
-nomes_validos = []
+nomes_validos = [] 
 for df_, nome_ in zip(dfs, nomes):
     if not df_.empty:
         dfs_validos.append(df_)
