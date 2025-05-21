@@ -1,0 +1,8 @@
+streamlit
+pandas
+psycopg2-binary
+numpy
+sqlalchemy
+streamlit-autorefresh
+pytz
+beautifulsoup4
