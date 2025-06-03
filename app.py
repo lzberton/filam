@@ -101,16 +101,42 @@ st.markdown(f"""
     <img class="logo-overlay" src="https://i.imgur.com/aYVcHeE.png" />
     <div class="last-update-box">DADOS ATUALIZADOS EM {last_update_str}</div>
 """, unsafe_allow_html=True)
+st.markdown(
+    """
+    <style>
+    .marquee {
+      width: 300px; /* ou ajuste conforme a sua tabela */
+      overflow: hidden;
+      white-space: nowrap;
+      box-sizing: border-box;
+    }
 
+    .marquee span {
+      display: inline-block;
+      padding-left: 5%;
+      animation: marquee 5s linear infinite alternate;
+    }
+
+    @keyframes marquee {
+      0%   { transform: translateX(10%); }
+      100% { transform: translateX(-20%); }
+    }
+    
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 #STATUS_CARRETA Column
 def calcular_status_carreta(df):
     df = df.copy()
     df["DATA"] = pd.to_datetime(df["DATA"])
     df.sort_values(by=["PLACA_REFERENCIA", "DATA"], inplace=True)
+    df = df.drop_duplicates(subset=["PLACA_REFERENCIA", "DATA"])
     status_df = df[df["EVENTO"].isin(["Carregado", "Vazio"])][["PLACA_REFERENCIA", "DATA", "EVENTO"]].copy()
     status_df = status_df.rename(columns={"EVENTO": "STATUS_CARRETA"})
     status_df.set_index(["PLACA_REFERENCIA", "DATA"], inplace=True)
+    
     df.set_index(["PLACA_REFERENCIA", "DATA"], inplace=True)
     df["STATUS_CARRETA"] = status_df["STATUS_CARRETA"]
     df["STATUS_CARRETA"] = df.groupby(level=0)["STATUS_CARRETA"].ffill()
@@ -289,7 +315,9 @@ df_pessoas_evento_filtrado["MOTORISTA_COM_ICONE"] = df_pessoas_evento_filtrado.a
     lambda row: f"{icon}{row['RAZAO_SOCIAL']} " if pd.notnull(row.get("DATA_VENCIMENTO")) else row["RAZAO_SOCIAL"],
     axis=1
 )
-
+def aplicar_marquee(df, coluna):
+    df[coluna] = df[coluna].apply(lambda x: f"<div class='marquee'><span>{x}</span></div>")
+    return df
 df_pessoas_evento_filtrado = df_pessoas_evento_filtrado.rename(columns={"RAZAO_SOCIAL": "MOTORISTA_OLD"})
 df_pessoas_evento_filtrado["RAZAO_SOCIAL"] = df_pessoas_evento_filtrado["MOTORISTA_COM_ICONE"]
 df_pessoas_evento_filtrado.drop(columns=["MOTORISTA_OLD", "MOTORISTA_COM_ICONE"], inplace=True, errors='ignore')
@@ -317,11 +345,14 @@ df_sdd = df_pessoas_evento_filtrado[
 df_bau = df_pessoas_evento_filtrado[df_pessoas_evento_filtrado["FILTRAGEM"] == "Bau"].drop(columns=["FILTRAGEM"])
 df_rodo = df_pessoas_evento_filtrado[df_pessoas_evento_filtrado["FILTRAGEM"] == "Rodo"].drop(columns=["FILTRAGEM"])
 df_outros = df_pessoas_evento_filtrado[df_pessoas_evento_filtrado["FILTRAGEM"].notna()].drop(columns=["FILTRAGEM"])
-
 df_sdc = reiniciar_ord(df_sdc)
 df_sdd = reiniciar_ord(df_sdd)
 df_bau = reiniciar_ord(df_bau)
 df_rodo = reiniciar_ord(df_rodo)
+df_sdc = aplicar_marquee(df_sdc, "MOTORISTA")
+df_sdd = aplicar_marquee(df_sdd, "MOTORISTA")
+df_bau = aplicar_marquee(df_bau, "MOTORISTA")
+df_rodo = aplicar_marquee(df_rodo, "MOTORISTA")
 dfs = [df_sdc, df_sdd, df_bau, df_rodo,df_outros]
 nomes = ["SIDER CLASSIFICADO", "SIDER DIVERSOS", "BAÚ CLASSIFICADO / DIVERSOS", "BITREM CLASSIFICADO / DIVERSOS", "AVISOS"]
 
