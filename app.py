@@ -126,7 +126,15 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
+st.markdown(f"""
+    <style>
+        .custom-image {{
+            height: 80vh;  /* 80% da altura da viewport */
+            object-fit: fit;  /* Mantém a proporção sem distorcer a imagem */
+            width: 100%;  /* Ajusta a largura da imagem ao container */
+        }}
+    </style>
+""", unsafe_allow_html=True)
 #STATUS_CARRETA Column
 def calcular_status_carreta(df):
     df = df.copy()
@@ -356,10 +364,10 @@ df_rodo = aplicar_marquee(df_rodo, "MOTORISTA")
 dfs = [df_sdc, df_sdd, df_bau, df_rodo,df_outros]
 nomes = ["SIDER CLASSIFICADO", "SIDER DIVERSOS", "BAÚ CLASSIFICADO / DIVERSOS", "BITREM CLASSIFICADO / DIVERSOS", "AVISOS"]
 
-slideshow_images = []
+slideshow_images = ["ACERTO.png"]
 slideshow_duration = len(slideshow_images)
 avisos_index = len(nomes) - 1
-count = st_autorefresh(interval=30000, limit=None, key="auto_refresh")
+count = st_autorefresh(interval=3000, limit=None, key="auto_refresh")
 dfs_validos = []
 nomes_validos = [] 
 for df_, nome_ in zip(dfs, nomes):
@@ -373,7 +381,7 @@ slideshow_phase = count % (main_loop_len + slideshow_duration)
 if "AVISOS" in nomes_validos and slideshow_phase >= main_loop_len:
     img_index = slideshow_phase - main_loop_len
     st.markdown(f"<h2 style='font-size:58px;'>AVISOS</h2>", unsafe_allow_html=True)
-    st.image(slideshow_images[img_index], use_container_width=False)
+    st.image(slideshow_images[img_index], use_container_width=True, width=None)
 else:
     index = slideshow_phase % len(dfs_validos)
     nome = nomes_validos[index]
