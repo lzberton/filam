@@ -140,8 +140,8 @@ classificados_query = """select distinct
 
 mopp_query = """select distinct "MOT_MOPP_ID","COD_PESSOA","DATA_VENCIMENTO" from oper.motorista_mopp mm """
 
-updated_query = """with updt as(select MAX("DATA_CARGA") as "DATA_CARGA" from oper.evento_operacao eo 
+updated_query = """with updt as(select MAX("DATA_CARGA") as "DATA_CARGA" from oper.evento_operacao eo where "DATA_CARGA">='2025-05-01'
 union all 
-select MAX("DATA_CARGA") as "DATA_CARGA"  from oper.romaneio r
+select MAX("DATA_CARGA") as "DATA_CARGA"  from oper.romaneio r where "DATA_CARGA">='2025-05-01'
 union all
-select MAX("DATA_CARGA") as "DATA_CARGA" from oper.rank_frota rf)select MIN("DATA_CARGA") as "DATA_CARGA" from updt"""
+select MAX("DATA_CARGA") as "DATA_CARGA" from oper.rank_frota rf where "DATA_CARGA">='2025-05-01')select MIN("DATA_CARGA") as "DATA_CARGA" from updt"""

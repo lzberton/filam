@@ -11,6 +11,7 @@ import pytz
 import os
 from bs4 import BeautifulSoup
 from util import calcular_tempo, reiniciar_ord, render_table_with_red_header, aplicar_filtragem
+import streamlit.components.v1 as components
 
 #Database Connection
 load_dotenv()
@@ -23,20 +24,31 @@ def connect_db():
     engine = create_engine(url)
     return engine
 @st.cache_data(ttl=900)
-def load_data(query):
+def load_eventos(query):
+    engine = connect_db()
+    return pd.read_sql(query, engine)
+@st.cache_data(ttl=600)
+def load_rank(query):
+    engine = connect_db()
+    return pd.read_sql(query, engine)
+@st.cache_data(ttl=6400)
+def load_classificados(query):
+    engine = connect_db()
+    return pd.read_sql(query, engine)
+@st.cache_data(ttl=3200)
+def load_mopp(query):
+    engine = connect_db()
+    return pd.read_sql(query, engine)
+@st.cache_data(ttl=900)
+def load_updated(query):
     engine = connect_db()
     return pd.read_sql(query, engine)
 
-#Database SQL queries - Data Loading
-df_eventos = load_data(eventos_query)
-
-df_rank = load_data(rank_frota_query)
-
-df_classificados = load_data(classificados_query)
-
-df_mopp = load_data(mopp_query)
-
-df_updated = load_data(updated_query)
+df_rank = load_rank(rank_frota_query)
+df_classificados = load_classificados(classificados_query)
+df_mopp = load_mopp(mopp_query)
+df_updated = load_updated(updated_query)
+df_eventos = load_eventos(eventos_query)
 
 #Hide top white bar
 last_update = df_updated.iloc[0, 0]
@@ -129,9 +141,9 @@ st.markdown(
 st.markdown(f"""
     <style>
         .custom-image {{
-            height: 80vh;  /* 80% da altura da viewport */
-            object-fit: fit;  /* Mantém a proporção sem distorcer a imagem */
-            width: 100%;  /* Ajusta a largura da imagem ao container */
+            height: 700px;  /* 80% da altura da viewport */
+            object-fit: fill;  /* Mantém a proporção sem distorcer a imagem */
+            width: 1300px;  /* Ajusta a largura da imagem ao container */
         }}
     </style>
 """, unsafe_allow_html=True)
@@ -380,8 +392,8 @@ slideshow_phase = count % (main_loop_len + slideshow_duration)
 
 if "AVISOS" in nomes_validos and slideshow_phase >= main_loop_len:
     img_index = slideshow_phase - main_loop_len
-    st.markdown(f"<h2 style='font-size:58px;'>AVISOS</h2>", unsafe_allow_html=True)
-    st.image(slideshow_images[img_index], use_container_width=True, width=None)
+    st.markdown(f"<h2 style='font-size:10px;'></h2>", unsafe_allow_html=True)
+    st.image(slideshow_images[img_index], use_container_width=True)
 else:
     index = slideshow_phase % len(dfs_validos)
     nome = nomes_validos[index]
@@ -390,3 +402,19 @@ else:
         render_table_with_red_header(dfs_validos[index])
     else:
         pass
+
+js_code = """
+<script>
+setInterval(() => {
+    const event = new MouseEvent("mousemove", {
+        view: window,
+        bubbles: true,
+        cancelable: true
+    });
+    document.dispatchEvent(event);
+    console.log("Mouse activity dispatched.");
+}, 15000);
+</script>
+"""
+
+components.html(js_code, height=0)
