@@ -23,7 +23,9 @@ from util import (
     aplicar_filtragem,
 )
 import streamlit.components.v1 as components
-
+from io import BytesIO
+import base64
+from PIL import Image
 # Database Connection
 load_dotenv()
 DB_USER = os.getenv("DB_USER")
@@ -197,9 +199,9 @@ st.markdown(
     f"""
     <style>
         .custom-image {{
-            height: 700px;  /* 80% da altura da viewport */
-            object-fit: fill;  /* Mantém a proporção sem distorcer a imagem */
-            width: 1300px;  /* Ajusta a largura da imagem ao container */
+            height: 650px;  /* 80% da altura da viewport */
+            object-fit: fit;  /* Mantém a proporção sem distorcer a imagem */
+            width: 1200px;  /* Ajusta a largura da imagem ao container */
         }}
     </style>
 """,
