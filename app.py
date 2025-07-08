@@ -522,7 +522,7 @@ nomes = [
     "AVISOS",
 ]
 
-slideshow_images = ["ACERTO.png"]
+slideshow_images = ["ACERTO.png","Aviso2.png","Aviso3.png"]
 slideshow_duration = len(slideshow_images)
 avisos_index = len(nomes) - 1
 count = st_autorefresh(interval=30000, limit=None, key="auto_refresh")
