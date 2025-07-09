@@ -575,7 +575,7 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
-button_col0,button_col1, button_col2 = st.columns([9,1,1])
+button_col0,button_col1, button_col2 = st.columns([19,1,1])
 
 with button_col1:
     prev_clicked = st.button("←", key="prev_button")
