@@ -98,13 +98,6 @@ df_classificados = st.session_state.df_classificados
 df_mopp = st.session_state.df_mopp
 df_updated = st.session_state.df_updated
 df_eventos = st.session_state.df_eventos
-# df_rank = load_rank(rank_frota_query)
-# df_classificados = load_classificados(classificados_query)
-# df_mopp = load_mopp(mopp_query)
-# df_updated = load_updated(updated_query)
-# df_eventos = load_eventos(eventos_query)
-
-# Hide top white bar
 last_update = df_updated.iloc[0, 0]
 last_update_str = last_update.strftime("%d/%m/%Y %H:%M")
 
@@ -170,6 +163,7 @@ st.markdown(
 """,
     unsafe_allow_html=True,
 )
+
 st.markdown(
     """
     <style>
@@ -513,6 +507,7 @@ df_sdc = aplicar_marquee(df_sdc, "MOTORISTA")
 df_sdd = aplicar_marquee(df_sdd, "MOTORISTA")
 df_bau = aplicar_marquee(df_bau, "MOTORISTA")
 df_rodo = aplicar_marquee(df_rodo, "MOTORISTA")
+# Listas de dados
 dfs = [df_sdc, df_sdd, df_bau, df_rodo, df_outros]
 nomes = [
     "SIDER CLASSIFICADO",
@@ -522,10 +517,14 @@ nomes = [
     "AVISOS",
 ]
 
-slideshow_images = ["ACERTO.png","Aviso2.png","Aviso3.png"]
+slideshow_images = ["ACERTO.png", "Aviso2.png", "Aviso3.png"]
 slideshow_duration = len(slideshow_images)
 avisos_index = len(nomes) - 1
-count = st_autorefresh(interval=30000, limit=None, key="auto_refresh")
+
+# Atualização automática para recarregar dados a cada 25s, mas não alterar índice
+st_autorefresh(interval=30000, limit=None, key="auto_refresh")
+
+# Filtrando dfs válidos
 dfs_validos = []
 nomes_validos = []
 for df_, nome_ in zip(dfs, nomes):
@@ -534,17 +533,73 @@ for df_, nome_ in zip(dfs, nomes):
         nomes_validos.append(nome_)
 
 main_loop_len = len(dfs_validos) - (1 if "AVISOS" in nomes_validos else 0)
-slideshow_phase = count % (main_loop_len + slideshow_duration)
+total_fases = main_loop_len + slideshow_duration
+
+# Estado inicial
+if "slide_index" not in st.session_state:
+    st.session_state.slide_index = 0
+
+# Avança automaticamente se não clicarem
+if "last_interaction" not in st.session_state:
+    st.session_state.last_interaction = st.session_state.slide_index
+
+# Só avança se não tiver clicado manualmente
+if st.session_state.last_interaction == st.session_state.slide_index:
+    st.session_state.slide_index = (st.session_state.slide_index + 1) % total_fases
+
+# Atualiza marcador de última interação
+st.session_state.last_interaction = st.session_state.slide_index
+# CSS customizado
+st.markdown("""
+    <style>
+    div.stButton > button {
+        background-color: #1f3066;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+    }
+    div.stButton > button:hover {
+        background-color: #4359a4;
+    }
+    /* Container to avoid pushing content */
+    div[data-testid="stHorizontalBlock"] {
+        position: fixed;
+        top: 60px;
+        right: 60px;
+        display: flex;
+        gap: 10px;
+        z-index: 9999;
+    }
+    </style>
+""", unsafe_allow_html=True)
+button_col1, button_col2 = st.columns(2)
+
+with button_col1:
+    prev_clicked = st.button("←", key="prev_button")
+with button_col2:
+    next_clicked = st.button("→", key="next_button")
+
+if prev_clicked:
+    st.session_state.slide_index = (st.session_state.slide_index - 1) % total_fases
+
+if next_clicked:
+    st.session_state.slide_index = (st.session_state.slide_index + 1) % total_fases
+
+# Renderização
+slideshow_phase = st.session_state.slide_index
 
 if "AVISOS" in nomes_validos and slideshow_phase >= main_loop_len:
     img_index = slideshow_phase - main_loop_len
-    st.markdown(f"<h2 style='font-size:10px;'></h2>", unsafe_allow_html=True)
+    st.markdown(f"<h2 style='font-size:10px; margin-top:-30px;'></h2>", unsafe_allow_html=True)
     st.image(slideshow_images[img_index], use_container_width=True)
 else:
     index = slideshow_phase % len(dfs_validos)
     nome = nomes_validos[index]
     if nome != "AVISOS":
-        st.markdown(f"<h2 style='font-size:58px;'>{nome}</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h2 style='font-size:58px; margin-top:-30px;'>{nome}</h2>", unsafe_allow_html=True)
         render_table_with_red_header(dfs_validos[index])
     else:
         pass

@@ -1,58 +1,64 @@
-eventos_query = """with mun as (
+eventos_query = """with
+mun as (
+    select
+        p."DESCRICAO" as "PAIS",
+        m."MUNICIPIO_ID",
+        split_part(m."MUNICIPIO", '-', 1) as "MUNICIPIO",
+        case
+            when m."UF_ID" = 'EX' then (
+                select prov."PROVINCIA"
+                from cep.provincia prov
+                where prov."PROVINCIA_ID" = m."PROVINCIA_ID"
+            )
+            else m."UF_ID"
+        end as "UF_PROV"
+    from cep.municipio m
+    left join cep.pais p on m."PAIS_ID" = p."PAIS_ID"
+),
+muni as (
+    select 
+        r."REFERENCIA_ID", 
+        mun."PAIS", 
+        mun."MUNICIPIO",
+        mun."UF_PROV"
+    from oper.referencia r
+    join mun on r."MUNICIPIO_ID" = mun."MUNICIPIO_ID"
+),
+ev_filtered as (
+    select *
+    from oper.evento_operacao
+    where "DATA" >= '2024-12-01'
+      and "NUM_EVENTO" in (2, 5, 12, 13, 9, 10)
+)
 select
-	p."DESCRICAO" as "PAIS",
-	m."MUNICIPIO_ID",
-	m."MUNICIPIO",
-	case
-		when m."UF_ID" = 'EX' then (
-		select
-			p."PROVINCIA"
-		from
-			cep.provincia p
-		where
-			p."PROVINCIA_ID" = m."PROVINCIA_ID")
-		else "UF_ID"
-	end as "UF_PROV"
-from
-	cep.municipio m
-left join cep.pais p on
-	m."PAIS_ID" = p."PAIS_ID"
-),muni as(
-select 
-	r."REFERENCIA_ID", 
-	r."REFERENCIA", 
-	mun."PAIS", 
-	mun."MUNICIPIO", 
-	mun."UF_PROV" from oper.referencia r 
-	join mun on r."MUNICIPIO_ID" = mun."MUNICIPIO_ID")
-select
-	eo."CONTROLE_EVO_ID",
-	case
-		eo."NUM_EVENTO" when 2 then 'Carregado'
-		when 5 then 'Vazio'
-		when 12 then 'Engate'
-		when 13 then 'Desengate'
-		when 9 then 'Recebimento'
-		when 10 then 'Saída'
-	end as "EVENTO",
-	eo."DATA",
-	eo."PLACA",
-	eo."REFERENCIA_ID",
-	re."NUM_ROMANEIO",
-	eo."COD_PESSOA",
-	pa."RAZAO_SOCIAL",
-	r."PLACA_REFERENCIA",
-	split_part(m."MUNICIPIO", '-', 1) as "MUNICIPIO",
-	m."UF_PROV",
-	m."PAIS"
-from oper.evento_operacao eo
-join oper.romaneio_evento re on
-	re."CONTROLE_EVO_ID" = eo."CONTROLE_EVO_ID"
+    eo."CONTROLE_EVO_ID",
+    em."descricao" as "EVENTO",
+    eo."DATA",
+    eo."PLACA",
+    eo."REFERENCIA_ID",
+    re."NUM_ROMANEIO",
+    eo."COD_PESSOA",
+    pa."RAZAO_SOCIAL",
+    r."PLACA_REFERENCIA",
+    m."MUNICIPIO",
+    m."UF_PROV",
+    m."PAIS"
+from ev_filtered eo
+join oper.romaneio_evento re on re."CONTROLE_EVO_ID" = eo."CONTROLE_EVO_ID"
+join oper.romaneio r on r."NUM_ROMANEIO" = re."NUM_ROMANEIO" and r."PLACA_REFERENCIA" is not null
 left join kss.pessoa pa on pa."COD_PESSOA" = eo."COD_PESSOA"
-left join oper.romaneio r on r."NUM_ROMANEIO" = re."NUM_ROMANEIO"
 left join muni m on m."REFERENCIA_ID" = eo."REFERENCIA_ID"
-where eo."DATA">='2024-12-01' and 
-	eo."NUM_EVENTO" in (2, 5, 12, 13, 9, 10) and r."PLACA_REFERENCIA" is not null """
+join (
+    select *
+    from (values
+        (2, 'Carregado'),
+        (5, 'Vazio'),
+        (12, 'Engate'),
+        (13, 'Desengate'),
+        (9, 'Recebimento'),
+        (10, 'Saída')
+    ) as t(num_evento, descricao)
+) em on eo."NUM_EVENTO" = em.num_evento"""
 
 rank_frota_query = """with mun as (
 select
@@ -140,8 +146,8 @@ classificados_query = """select distinct
 
 mopp_query = """select distinct "MOT_MOPP_ID","COD_PESSOA","DATA_VENCIMENTO" from oper.motorista_mopp mm """
 
-updated_query = """with updt as(select MAX("DATA_CARGA") as "DATA_CARGA" from oper.evento_operacao eo where "DATA_CARGA">='2025-05-01'
+updated_query = """with updt as(select MAX("DATA_CARGA") as "DATA_CARGA" from oper.evento_operacao eo WHERE "DATA" >= NOW() - INTERVAL '2 days'
 union all 
-select MAX("DATA_CARGA") as "DATA_CARGA"  from oper.romaneio r where "DATA_CARGA">='2025-05-01'
+select MAX("DATA_CARGA") as "DATA_CARGA"  from oper.romaneio r  WHERE "DATE_UPDATE" >= NOW() - INTERVAL '2 days'
 union all
-select MAX("DATA_CARGA") as "DATA_CARGA" from oper.rank_frota rf where "DATA_CARGA">='2025-05-01')select MIN("DATA_CARGA") as "DATA_CARGA" from updt"""
+select MAX("DATA_CARGA") as "DATA_CARGA" from oper.rank_frota rf WHERE "DATA_CARGA" >= NOW() - INTERVAL '2 days')select MIN("DATA_CARGA") as "DATA_CARGA" from updt"""
