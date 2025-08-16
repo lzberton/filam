@@ -112,9 +112,11 @@ st.markdown(
             color: white;
         }}
         .stApp * {{
+            background-color: #1F3066;
             color: white;
         }}
         html, body, .main {{
+            background-color: #1F3066;
             height: 50%;
         }}
         .block-container {{
