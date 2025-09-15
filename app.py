@@ -85,13 +85,13 @@ def load_updated(query):
     return pd.read_sql(query, engine)
 
 
-carregar_silenciosamente("df_eventos", lambda: load_eventos(eventos_query), 900)
+carregar_silenciosamente("df_eventos", lambda: load_eventos(eventos_query), 3600)
 carregar_silenciosamente("df_rank", lambda: load_rank(rank_frota_query), 600)
 carregar_silenciosamente(
     "df_classificados", lambda: load_classificados(classificados_query), 6400
 )
 carregar_silenciosamente("df_mopp", lambda: load_mopp(mopp_query), 3200)
-carregar_silenciosamente("df_updated", lambda: load_updated(updated_query), 900)
+carregar_silenciosamente("df_updated", lambda: load_updated(updated_query), 1800)
 
 df_rank = st.session_state.df_rank
 df_classificados = st.session_state.df_classificados
