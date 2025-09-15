@@ -27,7 +27,7 @@ muni as (
 ev_filtered as (
     select *
     from oper.evento_operacao
-    where "DATA" >= '2024-12-01'
+    where "DATA" >= '2025-04-01'
       and "NUM_EVENTO" in (2, 5, 12, 13, 9, 10)
 )
 select
