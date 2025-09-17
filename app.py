@@ -55,7 +55,7 @@ def carregar_silenciosamente(nome, loader_func, ttl):
         st.session_state[nome + "_ttl"] = ttl
 
 
-@st.cache_data(ttl=900)
+@st.cache_data(ttl=3200)
 def load_eventos(query):
     engine = connect_db()
     return pd.read_sql(query, engine)
@@ -79,7 +79,7 @@ def load_mopp(query):
     return pd.read_sql(query, engine)
 
 
-@st.cache_data(ttl=900)
+@st.cache_data(ttl=1800)
 def load_updated(query):
     engine = connect_db()
     return pd.read_sql(query, engine)
