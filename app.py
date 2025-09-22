@@ -58,35 +58,35 @@ def carregar_silenciosamente(nome, loader_func, ttl):
 @st.cache_data(ttl=3200)
 def load_eventos(query):
     engine = connect_db()
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         return pd.read_sql(query, conn)
 
 
 @st.cache_data(ttl=600)
 def load_rank(query):
     engine = connect_db()
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         return pd.read_sql(query, conn)
 
 
 @st.cache_data(ttl=6400)
 def load_classificados(query):
     engine = connect_db()
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         return pd.read_sql(query, conn)
 
 
 @st.cache_data(ttl=3200)
 def load_mopp(query):
     engine = connect_db()
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         return pd.read_sql(query, conn)
 
 
 @st.cache_data(ttl=1800)
 def load_updated(query):
     engine = connect_db()
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         return pd.read_sql(query, conn)
 
 
