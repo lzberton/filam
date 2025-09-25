@@ -10,7 +10,6 @@ from queries import (
     eventos_query,
     mopp_query,
     classificados_query,
-    updated_query,
     rank_frota_query,
 )
 import pytz
@@ -83,28 +82,18 @@ def load_mopp(query):
         return pd.read_sql(query, conn)
 
 
-@st.cache_data(ttl=1800)
-def load_updated(query):
-    engine = connect_db()
-    with engine.begin() as conn:
-        return pd.read_sql(query, conn)
-
-
 carregar_silenciosamente("df_eventos", lambda: load_eventos(eventos_query), 3600)
 carregar_silenciosamente("df_rank", lambda: load_rank(rank_frota_query), 600)
 carregar_silenciosamente(
     "df_classificados", lambda: load_classificados(classificados_query), 6400
 )
 carregar_silenciosamente("df_mopp", lambda: load_mopp(mopp_query), 3200)
-carregar_silenciosamente("df_updated", lambda: load_updated(updated_query), 1800)
 
 df_rank = st.session_state.df_rank
 df_classificados = st.session_state.df_classificados
 df_mopp = st.session_state.df_mopp
 df_updated = st.session_state.df_updated
 df_eventos = st.session_state.df_eventos
-last_update = df_updated.iloc[0, 0]
-last_update_str = last_update.strftime("%d/%m/%Y %H:%M")
 
 st.markdown(
     f"""
@@ -164,7 +153,6 @@ st.markdown(
     </style>
 
     <img class="logo-overlay" src="https://i.imgur.com/aYVcHeE.png" />
-    <div class="last-update-box">DADOS ATUALIZADOS EM {last_update_str}</div>
 """,
     unsafe_allow_html=True,
 )
