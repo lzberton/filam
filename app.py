@@ -92,7 +92,6 @@ carregar_silenciosamente("df_mopp", lambda: load_mopp(mopp_query), 3200)
 df_rank = st.session_state.df_rank
 df_classificados = st.session_state.df_classificados
 df_mopp = st.session_state.df_mopp
-df_updated = st.session_state.df_updated
 df_eventos = st.session_state.df_eventos
 
 st.markdown(

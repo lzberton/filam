@@ -5,7 +5,7 @@ import numpy as np
 from datetime import datetime, timedelta
 from streamlit_autorefresh import st_autorefresh
 from sqlalchemy import create_engine
-from queries import eventos_query, mopp_query,classificados_query,updated_query,rank_frota_query
+from queries import eventos_query, mopp_query,classificados_query,rank_frota_query
 import pytz
 import os
 from bs4 import BeautifulSoup
