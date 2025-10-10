@@ -35,7 +35,7 @@ st.set_page_config(layout="wide")
 @st.cache_resource
 def connect_db():
     url = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@database.datalake.kmm.app.br:5430/datalake"
-    engine = create_engine(url)
+    engine = create_engine(url,    pool_pre_ping=True,    pool_recycle=1800)
     return engine
 
 
@@ -57,28 +57,28 @@ def carregar_silenciosamente(nome, loader_func, ttl):
 @st.cache_data(ttl=3200)
 def load_eventos(query):
     engine = connect_db()
-    with engine.begin() as conn:
+    with engine.connect() as conn:
         return pd.read_sql(query, conn)
 
 
 @st.cache_data(ttl=600)
 def load_rank(query):
     engine = connect_db()
-    with engine.begin() as conn:
+    with engine.connect() as conn:
         return pd.read_sql(query, conn)
 
 
 @st.cache_data(ttl=6400)
 def load_classificados(query):
     engine = connect_db()
-    with engine.begin() as conn:
+    with engine.connect() as conn:
         return pd.read_sql(query, conn)
 
 
 @st.cache_data(ttl=3200)
 def load_mopp(query):
     engine = connect_db()
-    with engine.begin() as conn:
+    with engine.connect() as conn:
         return pd.read_sql(query, conn)
 
 
@@ -509,7 +509,7 @@ nomes = [
     "AVISOS",
 ]
 
-slideshow_images = ["Setembro.png","Envio.png", "Aviso2.png", "Aviso3.png"]
+slideshow_images = ["Envio.png", "Aviso2.png", "Aviso3.png"]
 slideshow_duration = len(slideshow_images)
 avisos_index = len(nomes) - 1
 
