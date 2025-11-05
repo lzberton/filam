@@ -132,6 +132,7 @@ classificados_query = """select distinct
 					When 'CAVALO MECANICO 4X2 - BAU' Then '4X2B'
 					When 'CAVALO MECANICO 6X2 - AGREGADO' Then '6X2A'
 					When 'SEMI REBOQUE TANQUE - 3 EIXOS DISTANCIADOS' Then 'TANQUE'
+                    When 'SEMI REBOQUE PORTA CONTAINER - 3 EIXOS' then 'CT'
 					else VTC."DESCRICAO"
        end as "TIPO_CARRETA",
        	case va."VALOR"  When 'Sim' Then 'C'
