@@ -509,7 +509,7 @@ nomes = [
     "AVISOS",
 ]
 
-slideshow_images = ["Novembro.png", "Carimbo1.png", "Carimbo2.png", "POLITICA.jpg", "SEGURANCA.jpg", "MA.jpg"]
+slideshow_images = ["Novembro.png", "Carimbo1.png", "Carimbo2.png", "POLITICA.jpg", "SEGURANCA.jpg", "MA.jpg", "braskem.jpg"]
 slideshow_duration = len(slideshow_images)
 avisos_index = len(nomes) - 1
 
